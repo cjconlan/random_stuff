@@ -8,7 +8,7 @@ Inspired by:
 
 Setup: on macos
 brew install qt
-pip install PyQt6  # Use version 6 as version 5 wouln't install on macos
+pip install PyQt6  # Use version 6 as version 5 wouldn't install on macos
 """
 
 import sys
@@ -94,10 +94,14 @@ class Example(QMainWindow):
             else:
                 command = "echo"  # hack that does nothing really
 
-        ps = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = ps.communicate()
-        lines = stdout.decode().splitlines()
-        errcode = ps.returncode
+        try:
+            ps = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = ps.communicate()
+            lines = stdout.decode().splitlines()
+            errcode = ps.returncode
+        except FileNotFoundError:
+            lines = ["CommandNotFound"]
+            errcode = 404
 
         self.statusBar().showMessage(f'retcode: {errcode}')
         self.textArea.insertPlainText(f"\nCommand: {command}\n")
